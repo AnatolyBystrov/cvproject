@@ -8,18 +8,20 @@ use Barryvdh\DomPDF\Facade\Pdf;
 class GenerateController extends Controller
 {
     public function generate(Request $request)
-    {
-        $data = $request->validate([
-            'name' => 'required|string',
-            'position' => 'required|string',
-            'experience' => 'nullable|string',
-            'education' => 'nullable|string',
-            'skills' => 'nullable|string',
-            'hobbies' => 'nullable|string',
-        ]);
+{
+    $data = $request->validate([
+        'name' => 'required|string',
+        'position' => 'required|string',
+        'experience' => 'nullable|string',
+        'education' => 'nullable|string',
+        'skills' => 'nullable|string',
+        'hobbies' => 'nullable|string',
+        'cover_letter' => 'required|string', 
+    ]);
 
-        $pdf = Pdf::loadView('pdf.cv', $data);
+    $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.cv', $data);
 
-        return $pdf->download('cv.pdf');
-    }
+    return $pdf->download('cv.pdf');
+}
+
 }

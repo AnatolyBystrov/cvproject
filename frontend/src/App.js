@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import './index.css'; // Убедись, что ты используешь Tailwind здесь
+import './index.css';
+import PreviewCard from './PreviewCard';
 
 function App() {
   const [formData, setFormData] = useState({
@@ -8,11 +9,24 @@ function App() {
     experience: '',
     education: '',
     skills: '',
-    hobbies: ''
+    hobbies: '',
+    cover_letter: ''
   });
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const generateCoverLetter = () => {
+
+    const fakeLetter = `Dear Hiring Manager,
+
+I'm thrilled to apply for the position of ${formData.position || 'Developer'} at your company. With experience in ${formData.experience || 'various tech domains'} and a passion for innovation, I'm confident I can contribute meaningfully.
+
+Sincerely,  
+${formData.name || 'John Doe'}`;
+
+    setFormData(prev => ({ ...prev, cover_letter: fakeLetter }));
   };
 
   const handleSubmit = async (e) => {
@@ -28,7 +42,7 @@ function App() {
       });
 
       if (!response.ok) {
-        alert('❌ Failed to generate CV. Please check your server.');
+        alert('❌ Failed to generate CV PDF. Please check your server.');
         return;
       }
 
@@ -39,14 +53,14 @@ function App() {
       a.download = 'cv.pdf';
       a.click();
 
-      // ✅ Сброс формы
       setFormData({
         name: '',
         position: '',
         experience: '',
         education: '',
         skills: '',
-        hobbies: ''
+        hobbies: '',
+        cover_letter: ''
       });
     } catch (error) {
       console.error('Error generating CV:', error);
@@ -55,32 +69,58 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-blue-300 flex items-center justify-center px-4">
-      <div className="bg-white shadow-xl rounded-xl p-10 w-full max-w-lg">
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">📝 CV Generator</h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {Object.keys(formData).map((field) => (
-            <div key={field}>
-              <label className="block text-sm font-semibold text-gray-600 capitalize mb-1">
-                {field}
-              </label>
-              <input
-                type="text"
-                name={field}
-                value={formData[field]}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                placeholder={`Enter your ${field}`}
-              />
-            </div>
-          ))}
-          <button
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-lg transition duration-300"
-          >
-            🚀 Generate CV
-          </button>
-        </form>
+    <div className="min-h-screen bg-gradient-to-r from-blue-200 to-purple-300 flex items-start justify-center p-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-6xl w-full">
+        
+        {/* Form block */}
+        <div className="bg-white bg-opacity-70 backdrop-blur-lg shadow-xl rounded-xl p-8">
+          <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">📝 CV Generator</h1>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {Object.entries(formData).map(([field, value]) => (
+              <div key={field}>
+                <label className="block text-sm font-semibold text-gray-700 capitalize mb-1">
+                  {field.replace('_', ' ')}
+                </label>
+                {field === 'cover_letter' ? (
+                  <>
+                    <textarea
+                      name={field}
+                      value={value}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-400 h-32 resize-none"
+                      placeholder="Write your cover letter here..."
+                    />
+                    <button
+                      type="button"
+                      onClick={generateCoverLetter}
+                      className="mt-2 text-sm text-blue-600 underline hover:text-blue-800 transition"
+                    >
+                      ✨ Generate Cover Letter with AI (Demo)
+                    </button>
+                  </>
+                ) : (
+                  <input
+                    type="text"
+                    name={field}
+                    value={value}
+                    onChange={handleChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    placeholder={`Enter your ${field}`}
+                  />
+                )}
+              </div>
+            ))}
+            <button
+              type="submit"
+              className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 rounded-lg transition duration-300"
+            >
+              🚀 Generate CV PDF
+            </button>
+          </form>
+        </div>
+
+        {/* Preview block */}
+        <PreviewCard formData={formData} />
       </div>
     </div>
   );

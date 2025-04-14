@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CV  - {{$name}}</title>
+    <title>CV - {{ $name }}</title>
     <style>
         body {
             font-family: sans-serif;
@@ -44,6 +44,11 @@
     @if(!empty($hobbies))
         <h2>Hobbies</h2>
         <p>{{ $hobbies }}</p>
+    @endif
+
+    @if(!empty($cover_letter))
+        <h2>Cover Letter</h2>
+        <p>{{ $cover_letter }}</p>
     @endif
 </body>
 </html>
