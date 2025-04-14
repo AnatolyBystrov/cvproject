@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cv-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cv-frontend
+  template:
+    metadata:
+      labels:
+        app: cv-frontend
+    spec:
+      containers:
+        - name: cv-frontend
+          image: cvproject-frontend
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cv-frontend
+spec:
+  selector:
+    app: cv-frontend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

@@ -1,12 +1,11 @@
+
 <?php
-
-namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
 class AiController extends Controller
 {
+
     public function generate(Request $request)
 {
     $request->validate([
@@ -16,8 +15,8 @@ class AiController extends Controller
 
     $prompt = "Write a short, professional and friendly cover letter for a person named {$request->name} applying for a position as a {$request->position}. Emphasize adaptability, technical skills, and enthusiasm.";
 
-    \Log::info('📤 Запрос к OpenAI начинается...');
-    \Log::info('🔑 Используется ключ: ' . substr(env('OPENAI_API_KEY'), 0, 10) . '...');
+    \Log::info('📤  OpenAI ');
+    \Log::info('🔑 ' . substr(env('OPENAI_API_KEY'), 0, 10) . '...');
 
     try {
         $response = Http::withHeaders([
@@ -33,7 +32,7 @@ class AiController extends Controller
         ]);
 
         if ($response->failed()) {
-            \Log::error('❌ OpenAI ответ с ошибкой', [
+            \Log::error('❌ OpenAI', [
                 'status' => $response->status(),
                 'body' => $response->json(),
             ]);
@@ -44,13 +43,13 @@ class AiController extends Controller
             ], 500);
         }
 
-        \Log::info('✅ OpenAI ответ получен успешно');
+        \Log::info('✅ OpenAI');
 
         return response()->json([
             'cover_letter' => $response->json()['choices'][0]['message']['content']
         ]);
     } catch (\Exception $e) {
-        \Log::error('💥 Исключение при вызове OpenAI', ['message' => $e->getMessage()]);
+        \Log::error('💥 OpenAI', ['message' => $e->getMessage()]);
 
         return response()->json([
             'error' => 'Something went wrong',
