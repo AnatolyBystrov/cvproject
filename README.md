@@ -1,96 +1,81 @@
+# CV & Cover Letter Generator 📝✨
 
-# 📝 CV Generator Web App
+A web-based tool that helps users generate a polished CV and cover letter in PDF format.  
+This project features a professional React frontend and a Laravel backend with optional AI-enhanced cover letter support.
 
-A beautiful and simple full-stack application that allows users to generate customized **CVs and Cover Letters**, preview them live, and download as PDF.
+## 🔥 Features
 
----
+- Dynamic form for user input (name, skills, education, etc.)
+- Live preview of the CV card before generating the PDF
+- AI-generated cover letter (optional)
+- Fallback mock cover letter if API key is missing
+- PDF generation and download
+- Fully containerized with Docker
+- Unit & Feature tests for the backend
 
-## ✨ Features
+## 📦 Tech Stack
 
-- 📋 Form to input:
-  - Name
-  - Position
-  - Experience
-  - Education
-  - Skills
-  - Hobbies
-  - Cover Letter (manual or auto-generated with mock AI)
+- **Frontend**: React, Tailwind CSS
+- **Backend**: Laravel 10, DomPDF
+- **Docker**: Multi-container setup (Nginx, PHP, Node)
+- **Testing**: PHPUnit
+- **Optional**: OpenAI API for AI-powered cover letters
 
-- 🧠 AI Cover Letter button (mock):
-  - Generates sample text (OpenAI-ready – insert your own API key)
+## 🚀 Getting Started
 
-- 🖨️ PDF Generation:
-  - Sends data to backend and generates `cv.pdf`
+### Prerequisites
 
-- 👁️ Live Preview:
-  - Realtime update of entered data
+- Docker + Docker Compose
+- (Optional) OpenAI API key
 
-- 🎨 Beautiful modern UI:
-  - Responsive design with Tailwind CSS
-  - Clean, two-column layout
+### 🐳 Run with Docker
 
----
+```bash
+docker compose up --build
+```
+
+- React App: http://localhost:3000  
+- Laravel API: http://localhost:8000
+
+### 🧠 Add your AI Key (optional)
+
+To enable the AI-generated cover letter, add your OpenAI API key in `.env`:
+
+```env
+OPENAI_API_KEY=sk-xxxxxx
+```
+
+If not set, the system will generate a mock cover letter.
+
+## 🧪 Running Tests
+
+```bash
+cd backend
+php artisan test
+```
+
+Includes feature tests for:
+- PDF generation with valid data
+- Validation errors for missing fields
+- Special character handling
 
 ## 📁 Project Structure
 
 ```
-cvproject/
-├── backend/         # Laravel API
-│   ├── app/Http/Controllers/GenerateController.php
-│   ├── routes/api.php
-│   ├── ...
-├── frontend/        # React + Tailwind
-│   ├── App.js
-│   ├── PreviewCard.js
-│   ├── ...
+📦cvproject
+ ┣ 📂backend
+ ┃ ┣ 📂app/Http/Controllers
+ ┃ ┣ 📂routes/api.php
+ ┃ ┣ 📂resources/views/pdf/cv.blade.php
+ ┃ ┣ 📂tests/Feature/Http/Controllers/GenerateControllerTest.php
+ ┣ 📂frontend
+ ┃ ┣ 📂src/PreviewCard.js
+ ┃ ┗ 📂...
+ ┣ 📄docker-compose.yml
+ ┣ 📄README.md
 ```
 
----
+## 👨‍💻 Author
 
-## 🚀 Getting Started
-
-### Frontend
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-### Backend
-
-```bash
-cd backend
-composer install
-cp .env.example .env
-php artisan key:generate
-php artisan serve
-```
-
----
-
-## 🔐 OpenAI API (Optional)
-
-To enable real AI cover letter generation:
-
-1. Create an account at https://platform.openai.com/
-2. Generate an API key
-3. Set it in `.env` like this:
-
-```env
-OPENAI_API_KEY=your-key-here
-```
-
-> 💡 The AI is mocked in the current version. To enable real generation, insert your key and call OpenAI API in `AiController`.
-
----
-
-## 🧪 Testing (optional)
-
-Coming soon...
-
----
-
-## 📄 License
-
-MIT — Created with ❤️ by **Anatoly Bystrov**
+Made with ❤️ by Anatoly Bystrov  
+Reach out: [LinkedIn](https://www.linkedin.com/in/anatolybystrov)

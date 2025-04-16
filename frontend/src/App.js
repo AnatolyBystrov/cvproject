@@ -18,7 +18,6 @@ function App() {
   };
 
   const generateCoverLetter = () => {
-
     const fakeLetter = `Dear Hiring Manager,
 
 I'm thrilled to apply for the position of ${formData.position || 'Developer'} at your company. With experience in ${formData.experience || 'various tech domains'} and a passion for innovation, I'm confident I can contribute meaningfully.
@@ -33,12 +32,14 @@ ${formData.name || 'John Doe'}`;
     e.preventDefault();
 
     const form = new FormData();
-    Object.entries(formData).forEach(([key, value]) => form.append(key, value));
+    Object.entries(formData).forEach(([key, value]) => {
+      form.append(key, value);
+    });
 
     try {
       const response = await fetch('http://localhost:8000/api/generate', {
         method: 'POST',
-        body: form
+        body: form,
       });
 
       if (!response.ok) {
@@ -52,6 +53,7 @@ ${formData.name || 'John Doe'}`;
       a.href = url;
       a.download = 'cv.pdf';
       a.click();
+      window.URL.revokeObjectURL(url);
 
       setFormData({
         name: '',
@@ -72,7 +74,7 @@ ${formData.name || 'John Doe'}`;
     <div className="min-h-screen bg-gradient-to-r from-blue-200 to-purple-300 flex items-start justify-center p-10">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-6xl w-full">
         
-        {/* Form block */}
+        {/* Form */}
         <div className="bg-white bg-opacity-70 backdrop-blur-lg shadow-xl rounded-xl p-8">
           <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">📝 CV Generator</h1>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -119,7 +121,7 @@ ${formData.name || 'John Doe'}`;
           </form>
         </div>
 
-        {/* Preview block */}
+        {/* Preview */}
         <PreviewCard formData={formData} />
       </div>
     </div>
