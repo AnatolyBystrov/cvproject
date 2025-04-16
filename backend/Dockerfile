@@ -6,9 +6,10 @@ RUN apt-get update && apt-get install -y \
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-COPY . /var/www/html
+WORKDIR /var/www/html
 
-COPY database/database.sqlite /var/www/html/database/database.sqlite
+COPY . /var/www/html
+COPY .env /var/www/html/.env
 
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 
@@ -17,10 +18,8 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-av
 
 RUN a2enmod rewrite
 
-WORKDIR /var/www/html
+RUN composer install --no-interaction --optimize-autoloader
 
-RUN composer install --no-interaction --optimize-autoloader && \
-    php artisan config:clear && php artisan route:clear && \
-    chown -R www-data:www-data /var/www/html && chmod -R 755 /var/www/html
+RUN php artisan config:clear && php artisan route:clear
 
 CMD ["apache2-foreground"]

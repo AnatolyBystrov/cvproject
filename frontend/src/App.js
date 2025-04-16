@@ -18,13 +18,7 @@ function App() {
   };
 
   const generateCoverLetter = () => {
-    const fakeLetter = `Dear Hiring Manager,
-
-I'm thrilled to apply for the position of ${formData.position || 'Developer'} at your company. With experience in ${formData.experience || 'various tech domains'} and a passion for innovation, I'm confident I can contribute meaningfully.
-
-Sincerely,  
-${formData.name || 'John Doe'}`;
-
+    const fakeLetter = `Dear Hiring Manager,\n\nI'm thrilled to apply for the position of ${formData.position || 'Developer'} at your company. With experience in ${formData.experience || 'various tech domains'} and a passion for innovation, I'm confident I can contribute meaningfully.\n\nSincerely,\n${formData.name || 'John Doe'}`;
     setFormData(prev => ({ ...prev, cover_letter: fakeLetter }));
   };
 
@@ -78,8 +72,6 @@ ${formData.name || 'John Doe'}`;
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-200 to-purple-300 flex items-start justify-center p-10">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-6xl w-full">
-        
-        {/* Form */}
         <div className="bg-white bg-opacity-70 backdrop-blur-lg shadow-xl rounded-xl p-8">
           <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">📝 CV Generator</h1>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -125,8 +117,6 @@ ${formData.name || 'John Doe'}`;
             </button>
           </form>
         </div>
-
-        {/* Preview */}
         <PreviewCard formData={formData} />
       </div>
     </div>
