@@ -42,15 +42,15 @@ ${formData.name || 'John Doe'}`;
         : 'https://cvproject-g1yv.onrender.com';
 
     try {
-      const BACKEND_URL =
-      process.env.NODE_ENV === 'development'
-        ? 'http://localhost:8000'
-        : 'https://cvproject-g1yv.onrender.com';
-    
-    const response = await fetch(`${BACKEND_URL}/api/generate`, {
-      method: 'POST',
-      body: form,
-    });
+      const response = await fetch(`${BACKEND_URL}/api/generate`, {
+        method: 'POST',
+        body: form,
+      });
+
+      if (!response.ok) {
+        alert('❌ Failed to generate CV PDF. Please check your server.');
+        return;
+      }
 
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
@@ -78,6 +78,7 @@ ${formData.name || 'John Doe'}`;
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-200 to-purple-300 flex items-start justify-center p-10">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-6xl w-full">
+        
         {/* Form */}
         <div className="bg-white bg-opacity-70 backdrop-blur-lg shadow-xl rounded-xl p-8">
           <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">📝 CV Generator</h1>
