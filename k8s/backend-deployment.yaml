@@ -1,32 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cv-backend
+  name: backend-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: cv-backend
+      app: backend
   template:
     metadata:
       labels:
-        app: cv-backend
+        app: backend
     spec:
       containers:
-        - name: cv-backend
-          image: cvproject-backend
-          imagePullPolicy: Never
+        - name: backend
+          image: your-dockerhub-username/your-laravel-image:latest
           ports:
             - containerPort: 80
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: cv-backend
-spec:
-  selector:
-    app: cv-backend
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 80
+          volumeMounts:
+            - name: storage
+              mountPath: /var/www/html/storage
+      volumes:
+        - name: storage
+          emptyDir: {}
