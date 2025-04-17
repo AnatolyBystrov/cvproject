@@ -1,5 +1,6 @@
 FROM php:8.2-cli
 
+
 # Установка системных зависимостей
 RUN apt-get update && apt-get install -y \
     unzip zip curl git sqlite3 libsqlite3-dev libzip-dev libpng-dev libjpeg62-turbo-dev libfreetype6-dev \
