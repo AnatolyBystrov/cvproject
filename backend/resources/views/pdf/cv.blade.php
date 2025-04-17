@@ -2,9 +2,9 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>CV</title>
+    <title>CV PDF</title>
     <style>
-        body { font-family: sans-serif; line-height: 1.5; }
+        body { font-family: DejaVu Sans, sans-serif; line-height: 1.6; padding: 20px; }
         h1 { font-size: 24px; margin-bottom: 10px; }
         p { margin: 5px 0; }
     </style>
@@ -16,8 +16,5 @@
     <p><strong>Education:</strong> {{ $education }}</p>
     <p><strong>Skills:</strong> {{ $skills }}</p>
     <p><strong>Hobbies:</strong> {{ $hobbies }}</p>
-    <hr>
-    <h2>Cover Letter</h2>
-    <p>{!! nl2br(e($cover_letter)) !!}</p>
 </body>
 </html>

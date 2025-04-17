@@ -1,32 +1,24 @@
-FROM php:8.3-apache
+FROM php:8.2-cli
 
+# Устанавливаем system dependencies
 RUN apt-get update && apt-get install -y \
-    libzip-dev unzip sqlite3 libsqlite3-dev \
-    && docker-php-ext-install pdo pdo_sqlite zip
+    libzip-dev zip unzip git curl libonig-dev libxml2-dev libpng-dev libjpeg-dev libfreetype6-dev \
+    && docker-php-ext-install pdo pdo_sqlite zip mbstring exif pcntl bcmath gd
 
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+# Установка Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-WORKDIR /var/www/html
+# Установка рабочей директории
+WORKDIR /app
 
-COPY . /var/www/html
-COPY .env /var/www/html/.env
+# Копируем файлы
+COPY . .
 
-ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+# Установка зависимостей Laravel
+RUN composer install --no-dev --optimize-autoloader
 
+# Открываем порт
+EXPOSE 10000
 
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf && \
-    sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
-
-RUN a2enmod rewrite
-
-
-RUN composer install --no-interaction --optimize-autoloader
-
-
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache && \
-    chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
-
-
-RUN php artisan config:clear && php artisan route:clear
-
-CMD ["apache2-foreground"]
+# Старт Laravel сервера
+CMD php artisan serve --host=0.0.0.0 --port=10000
