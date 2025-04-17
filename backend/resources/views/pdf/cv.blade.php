@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <title>CV PDF</title>
     <style>
-        body { font-family: DejaVu Sans, sans-serif; line-height: 1.6; padding: 20px; }
-        h1 { font-size: 24px; margin-bottom: 10px; }
-        p { margin: 5px 0; }
+        body { font-family: DejaVu Sans, sans-serif; }
+        h1 { color: #6366f1; }
     </style>
 </head>
 <body>
@@ -16,5 +15,6 @@
     <p><strong>Education:</strong> {{ $education }}</p>
     <p><strong>Skills:</strong> {{ $skills }}</p>
     <p><strong>Hobbies:</strong> {{ $hobbies }}</p>
+    <p><strong>Cover Letter:</strong><br>{{ $cover_letter }}</p>
 </body>
 </html>
