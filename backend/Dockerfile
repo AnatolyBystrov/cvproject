@@ -9,18 +9,17 @@ RUN apt-get update && apt-get install -y \
 # Установка Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Установка директории
+# Рабочая директория
 WORKDIR /app
 
 # Копируем проект
 COPY . .
 
-# 💥 Копируем .env отдельно (это критично!)
-COPY .env .env
-
-# Laravel dependencies
+# Установка зависимостей Laravel
 RUN composer install --no-dev --optimize-autoloader
 
+# Открываем порт
 EXPOSE 10000
 
-CMD php artisan serve --host=0.0.0.0 --port=10000
+# Старт сервера Laravel
+CMD php artisan serve --host=0.0.0.0 --port=${PORT:-10000}
