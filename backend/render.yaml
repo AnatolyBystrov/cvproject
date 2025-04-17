@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: cv-backend
+    env: docker
+    plan: free
+    buildCommand: |
+      cp .env.example .env
+      composer install --no-dev --optimize-autoloader
+    startCommand: php artisan serve --host 0.0.0.0 --port 10000
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_URL
+        value: https://cv-backend.onrender.com
+      - key: DB_CONNECTION
+        value: sqlite
+      - key: DB_DATABASE
+        value: /opt/render/project/src/database/database.sqlite
