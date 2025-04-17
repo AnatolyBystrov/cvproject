@@ -3,24 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Dompdf\Dompdf;
-use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PDFController extends Controller
 {
     public function generate(Request $request)
     {
-        $data = $request->all();
+        if (empty(trim($html))) {
+            return response("Generated HTML is empty!", 500);
+        }        
+        $pdf = Pdf::loadView('pdf.cv', $request->all());
 
-        $html = view('pdf.cv', $data)->render();
-
-        $pdf = new Dompdf();
-        $pdf->loadHtml($html);
-        $pdf->setPaper('A4', 'portrait');
-        $pdf->render();
-
-        return response($pdf->output(), 200)
-            ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'attachment; filename="cv.pdf"');
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, 'cv.pdf');
     }
 }
