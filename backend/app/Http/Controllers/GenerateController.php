@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\View;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class GenerateController extends Controller
@@ -19,10 +20,14 @@ class GenerateController extends Controller
             'cover_letter' => 'required|string',
         ]);
 
+        if (!View::exists('pdf.cv')) {
+            return response("Blade template not found", 404);
+        }
+
         $pdf = Pdf::loadView('pdf.cv', $data);
 
-        return response($pdf->output(), 200)
-            ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'attachment; filename="cv.pdf"');
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, 'cv.pdf', ['Content-Type' => 'application/pdf']);
     }
 }

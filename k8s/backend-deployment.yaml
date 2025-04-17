@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: your-dockerhub-username/your-laravel-image:latest
+          image: anatolyizi/laravel-image:latest 
           ports:
             - containerPort: 80
           volumeMounts:
