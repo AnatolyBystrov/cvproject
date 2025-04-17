@@ -14,7 +14,6 @@ function App() {
   });
 
   const [darkMode, setDarkMode] = useState(false);
-
   const toggleTheme = () => setDarkMode(!darkMode);
 
   const handleChange = (e) => {
@@ -34,17 +33,18 @@ function App() {
       form.append(key, formData[key]);
     }
 
+    const API_URL = process.env.REACT_APP_API_URL || '';
+    console.log('🌍 API URL:', API_URL);
+
     try {
-      const response = await fetch(`/api/generate`, {
+      const response = await fetch(`${API_URL}/api/generate`, {
         method: 'POST',
         body: form,
       });
 
       const contentType = response.headers.get('content-type');
-      console.log('📄 Response Content-Type:', contentType);
-
       const debugText = await response.clone().text();
-      console.log('🧾 RAW Response Preview:\n', debugText.slice(0, 500));
+      console.log('📄 Response Preview:\n', debugText.slice(0, 300));
 
       if (response.ok && contentType.includes('application/pdf')) {
         const blob = await response.blob();
