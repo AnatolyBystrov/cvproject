@@ -15,6 +15,9 @@ WORKDIR /app
 # Копируем проект
 COPY . .
 
+# 💥 Копируем .env отдельно (это критично!)
+COPY .env .env
+
 # Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
 
