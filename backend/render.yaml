@@ -22,3 +22,10 @@ services:
         value: sqlite
       - key: DB_DATABASE
         value: database/database.sqlite
+    services:
+      - type: web
+        name: cvproject
+        env: docker
+        plan: free
+        dockerfilePath: backend/Dockerfile
+        startCommand: ./start.sh

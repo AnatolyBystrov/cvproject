@@ -5,11 +5,13 @@ echo "🚀 Starting Laravel..."
 # Убедимся, что база существует
 touch database/database.sqlite
 
-# Очистка кэша
-php artisan config:clear
-php artisan cache:clear
-php artisan route:clear
-php artisan view:clear
+# Кэширование конфигов (обязательно для production)
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
 
-# Запуск
+# Миграции (если есть)
+php artisan migrate --force || true
+
+# Запуск Laravel сервера
 php artisan serve --host=0.0.0.0 --port=10000
