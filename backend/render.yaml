@@ -6,7 +6,8 @@ services:
     repo: https://github.com/AnatolyBystrov/cvproject
     branch: main
     dockerfilePath: backend/Dockerfile
-    buildCommand: ""
+    buildCommand: |
+      cp .env .env.local || true
     startCommand: "./start.sh"
     envVars:
       - key: APP_ENV

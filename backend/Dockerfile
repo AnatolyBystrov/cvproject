@@ -16,6 +16,8 @@ WORKDIR /app
 # Копируем проект
 COPY . .
 
+COPY database/database.sqlite database/database.sqlite
+
 # Установка зависимостей Laravel
 RUN composer install --no-dev --optimize-autoloader
 
