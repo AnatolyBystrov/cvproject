@@ -38,10 +38,13 @@ function App() {
     console.log('🌍 API URL:', fullEndpoint);
 
     try {
-      const response = await fetch(fullEndpoint, {
+      const response = await fetch(`${API_URL}/api/generate`, {
         method: 'POST',
         body: form,
-      });
+        headers: {
+          'Accept': 'application/json'
+        }
+      });      
 
       const contentType = response.headers.get('content-type') || '';
       const debugText = await response.clone().text();
