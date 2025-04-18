@@ -6,9 +6,6 @@ services:
     repo: https://github.com/AnatolyBystrov/cvproject
     branch: main
     dockerfilePath: backend/Dockerfile
-    buildCommand: |
-      cp .env .env.local || true
-    startCommand: "./start.sh"
     envVars:
       - key: APP_ENV
         value: production
@@ -22,10 +19,3 @@ services:
         value: sqlite
       - key: DB_DATABASE
         value: database/database.sqlite
-    services:
-      - type: web
-        name: cvproject
-        env: docker
-        plan: free
-        dockerfilePath: backend/Dockerfile
-        startCommand: ./start.sh
