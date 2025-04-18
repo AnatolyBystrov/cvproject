@@ -3,37 +3,39 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\View;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 class PDFController extends Controller
 {
     public function generate(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string',
-            'position' => 'required|string',
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'position' => 'required|string|max:255',
             'experience' => 'nullable|string',
             'education' => 'nullable|string',
             'skills' => 'nullable|string',
             'hobbies' => 'nullable|string',
-            'cover_letter' => 'required|string'
+            'cover_letter' => 'nullable|string',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'message' => 'Validation failed',
-                'errors' => $validator->errors()
-            ], 422);
-        }
+        $html = View::make('pdf.cv', $validated)->render();
 
-        $data = $request->only([
-            'name', 'position', 'experience', 'education', 'skills', 'hobbies', 'cover_letter'
-        ]);
+        $options = new Options();
+        $options->set('defaultFont', 'DejaVu Sans');
+        $dompdf = new Dompdf($options);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
 
-        $html = view('pdf.cv', $data)->render();
-        $pdf = Pdf::loadHTML($html);
+        $output = $dompdf->output();
 
-        return $pdf->download('cv.pdf');
+        return response($output, 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Access-Control-Allow-Origin', '*')
+            ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+            ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     }
 }

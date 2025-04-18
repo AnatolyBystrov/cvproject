@@ -33,16 +33,17 @@ function App() {
       form.append(key, formData[key]);
     }
 
-    const API_URL = process.env.REACT_APP_API_URL || '';
-    console.log('🌍 API URL:', API_URL);
+    const API_URL = process.env.REACT_APP_API_URL?.trim().replace(/\/$/, '') || '';
+    const fullEndpoint = `${API_URL}/api/generate`;
+    console.log('🌍 API URL:', fullEndpoint);
 
     try {
-      const response = await fetch(`${API_URL}/api/generate`, {
+      const response = await fetch(fullEndpoint, {
         method: 'POST',
         body: form,
       });
 
-      const contentType = response.headers.get('content-type');
+      const contentType = response.headers.get('content-type') || '';
       const debugText = await response.clone().text();
       console.log('📄 Response Preview:\n', debugText.slice(0, 300));
 
@@ -68,8 +69,8 @@ function App() {
         throw new Error('❌ Backend did not return a valid PDF');
       }
     } catch (error) {
-      console.error('Error generating CV:', error);
-      alert('🚨 An error occurred. Try again later.');
+      console.error('🚨 Error generating CV:', error);
+      alert('An error occurred. Try again later.');
     }
   };
 
