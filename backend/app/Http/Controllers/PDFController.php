@@ -18,8 +18,8 @@ class PDFController extends Controller
             'education' => 'nullable|string',
             'skills' => 'nullable|string',
             'hobbies' => 'nullable|string',
-            'cover_letter' => 'nullable|string',
-        ]);
+            'cover_letter' => 'required|string',
+        ]);        
 
         $html = View::make('pdf.cv', $validated)->render();
 

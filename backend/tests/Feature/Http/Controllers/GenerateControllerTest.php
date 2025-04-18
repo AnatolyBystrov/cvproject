@@ -29,8 +29,7 @@ class GenerateControllerTest extends TestCase
     {
         $response = $this->postJson('/api/generate', [
             'name' => 'Anatoly',
-            // 'position' => 'Backend Developer', // intentionally missing
-            // 'cover_letter' => '...' // intentionally missing
+            // intentionally missing position and cover_letter
         ]);
 
         $response->assertStatus(422);
@@ -38,35 +37,41 @@ class GenerateControllerTest extends TestCase
     }
 
     public function test_it_returns_pdf_response_headers()
-{
-    $response = $this->postJson('/api/generate', [
-        'name' => 'Test User',
-        'position' => 'Tester',
-        'cover_letter' => 'Test Cover Letter'
-    ]);
+    {
+        $response = $this->postJson('/api/generate', [
+            'name' => 'Test User',
+            'position' => 'Tester',
+            'experience' => '2 years',
+            'education' => 'College',
+            'skills' => 'Testing, QA',
+            'hobbies' => 'Video games',
+            'cover_letter' => 'Test Cover Letter'
+        ]);
 
-    $response->assertStatus(200);
-    $response->assertHeader('Content-Type', 'application/pdf');
-}
+        $response->assertStatus(200);
+        $response->assertHeader('Content-Type', 'application/pdf');
+    }
 
-public function test_it_fails_on_empty_payload()
-{
-    $response = $this->postJson('/api/generate', []);
-    $response->assertStatus(422);
-    $response->assertJsonValidationErrors(['name', 'position', 'cover_letter']);
-}
+    public function test_it_fails_on_empty_payload()
+    {
+        $response = $this->postJson('/api/generate', []);
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['name', 'position', 'cover_letter']);
+    }
 
-public function test_it_handles_special_characters_in_input()
-{
-    $response = $this->postJson('/api/generate', [
-        'name' => '<script>alert("xss")</script>',
-        'position' => 'Developer',
-        'cover_letter' => 'Cover with <b>bold</b>'
-    ]);
+    public function test_it_handles_special_characters_in_input()
+    {
+        $response = $this->postJson('/api/generate', [
+            'name' => '<script>alert("xss")</script>',
+            'position' => 'Developer',
+            'experience' => 'Senior',
+            'education' => 'University',
+            'skills' => '<img src="x" onerror="alert(1)">',
+            'hobbies' => '⚡🔥✨',
+            'cover_letter' => 'Cover with <b>bold</b>'
+        ]);
 
-    $response->assertStatus(200);
-    $response->assertHeader('Content-Type', 'application/pdf');
-}
-
-
+        $response->assertStatus(200);
+        $response->assertHeader('Content-Type', 'application/pdf');
+    }
 }
