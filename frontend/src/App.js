@@ -33,7 +33,7 @@ function App() {
       form.append(key, formData[key]);
     }
 
-    const API_URL = process.env.REACT_APP_API_URL?.trim().replace(/\/$/, '') || '';
+    const API_URL = 'https://cvproject-g1yv.onrender.com';
     const fullEndpoint = `${API_URL}/api/generate`;
     console.log('🌍 API URL:', fullEndpoint);
 
