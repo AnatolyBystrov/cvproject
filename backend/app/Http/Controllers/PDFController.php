@@ -3,32 +3,36 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\View;
+use Dompdf\Dompdf;
 
 class PDFController extends Controller
 {
     public function generate(Request $request)
     {
-        $name = $request->input('name');
-        $position = $request->input('position');
-        $experience = $request->input('experience');
-        $education = $request->input('education');
-        $skills = $request->input('skills');
-        $hobbies = $request->input('hobbies');
-        $coverLetter = $request->input('cover_letter');
+        $data = $request->only([
+            'name',
+            'position',
+            'experience',
+            'education',
+            'skills',
+            'hobbies',
+            'cover_letter'
+        ]);
 
-        $html = view('pdf.cv', [
-            'name' => $name,
-            'position' => $position,
-            'experience' => $experience,
-            'education' => $education,
-            'skills' => $skills,
-            'hobbies' => $hobbies,
-            'cover_letter' => $coverLetter,
-        ])->render();
+        if (!View::exists('pdf.cv')) {
+            return response()->json(['error' => 'CV view not found.'], 500);
+        }
 
-        $pdf = Pdf::loadHTML($html);
+        $html = view('pdf.cv', $data)->render();
 
-        return $pdf->download('cv.pdf');
+        $dompdf = new Dompdf();
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        return response($dompdf->output(), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Access-Control-Allow-Origin', '*');
     }
 }
