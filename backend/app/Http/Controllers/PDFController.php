@@ -3,39 +3,32 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\View;
-use Dompdf\Dompdf;
-use Dompdf\Options;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PDFController extends Controller
 {
     public function generate(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'position' => 'required|string|max:255',
-            'experience' => 'nullable|string',
-            'education' => 'nullable|string',
-            'skills' => 'nullable|string',
-            'hobbies' => 'nullable|string',
-            'cover_letter' => 'required|string',
-        ]);        
+        $name = $request->input('name');
+        $position = $request->input('position');
+        $experience = $request->input('experience');
+        $education = $request->input('education');
+        $skills = $request->input('skills');
+        $hobbies = $request->input('hobbies');
+        $coverLetter = $request->input('cover_letter');
 
-        $html = View::make('pdf.cv', $validated)->render();
+        $html = view('pdf.cv', [
+            'name' => $name,
+            'position' => $position,
+            'experience' => $experience,
+            'education' => $education,
+            'skills' => $skills,
+            'hobbies' => $hobbies,
+            'cover_letter' => $coverLetter,
+        ])->render();
 
-        $options = new Options();
-        $options->set('defaultFont', 'DejaVu Sans');
-        $dompdf = new Dompdf($options);
-        $dompdf->loadHtml($html);
-        $dompdf->setPaper('A4', 'portrait');
-        $dompdf->render();
+        $pdf = Pdf::loadHTML($html);
 
-        $output = $dompdf->output();
-
-        return response($output, 200)
-            ->header('Content-Type', 'application/pdf')
-            ->header('Access-Control-Allow-Origin', '*')
-            ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-            ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+        return $pdf->download('cv.pdf');
     }
 }

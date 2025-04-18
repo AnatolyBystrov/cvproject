@@ -4,11 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PDFController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-*/
+Route::get('/generate', function () {
+    return response()->json(['status' => 'Backend is UP', 'endpoint' => '/api/generate']);
+});
 
 Route::post('/generate', [PDFController::class, 'generate']);
 

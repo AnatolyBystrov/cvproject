@@ -6,7 +6,7 @@ use App\Http\Controllers\GenerateController;
 Route::get('/', function () {
     return response()->json([
         'status' => 'Backend is up',
-        'endpoint' => '/api/generate'
+        'endpoint' => '/api/generate',
     ]);
 });
 
@@ -18,6 +18,6 @@ Route::get('/test-cv', function () {
         'education' => 'BSc Computer Science',
         'skills' => 'Laravel, React, Docker',
         'hobbies' => 'Hiking, Chess',
-        'cover_letter' => 'Dear Hiring Manager, I am excited to apply...'
+        'cover_letter' => 'Dear Hiring Manager, I am excited to apply...',
     ]);
 });
