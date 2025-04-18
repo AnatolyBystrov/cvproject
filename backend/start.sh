@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd backend 
+
 echo "🚀 Starting Laravel..."
 
 touch database/database.sqlite
