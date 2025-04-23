@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 use Dompdf\Dompdf;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PDFController extends Controller
 {
@@ -34,5 +35,13 @@ class PDFController extends Controller
         return response($dompdf->output(), 200)
             ->header('Content-Type', 'application/pdf')
             ->header('Access-Control-Allow-Origin', '*');
+    }
+
+    public function generateCoverLetter(Request $request)
+    {
+        $data = $request->all();
+
+        return Pdf::loadView('pdf.cover_letter', $data)
+            ->download('cover_letter.pdf');
     }
 }
