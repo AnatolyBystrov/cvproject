@@ -12,7 +12,7 @@ Route::get('/generate', function () {
     ]);
 });
 
-
+Route::post('/generate-cover-letter', [PDFController::class, 'generateCoverLetter']);
 Route::post('/generate', [PDFController::class, 'generate']);
 
 

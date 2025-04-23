@@ -40,8 +40,8 @@ class PDFController extends Controller
     public function generateCoverLetter(Request $request)
     {
         $data = $request->all();
-
-        return Pdf::loadView('pdf.cover_letter', $data)
-            ->download('cover_letter.pdf');
+        $pdf = \PDF::loadView('pdf.cover_letter', $data);
+        return $pdf->download('cover_letter.pdf');
     }
+    
 }
