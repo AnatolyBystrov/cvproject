@@ -22,7 +22,7 @@ function App() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const generateCoverLetter = async () => {
+  const generateCoverLetterPDF = async () => {
     const form = new FormData();
     Object.entries(formData).forEach(([key, value]) => form.append(key, value));
 
@@ -43,6 +43,26 @@ function App() {
       window.URL.revokeObjectURL(url);
     } catch (err) {
       console.error("❌ Error generating cover letter:", err);
+      alert("An error occurred. Try again later.");
+    }
+  };
+
+  const generateCoverLetterAI = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/generate-cover-letter-text`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+      if (response.ok && data.cover_letter) {
+        setFormData(prev => ({ ...prev, cover_letter: data.cover_letter }));
+      } else {
+        alert('⚠️ Could not generate cover letter.');
+      }
+    } catch (err) {
+      console.error("💥 AI error:", err);
       alert("An error occurred. Try again later.");
     }
   };
@@ -114,14 +134,32 @@ function App() {
               <div key={field}>
                 <label className="block font-semibold mb-1 capitalize">{field.replace('_', ' ')}</label>
                 {field === 'cover_letter' ? (
-                  <textarea
-                    name={field}
-                    value={value}
-                    onChange={handleChange}
-                    placeholder="Write or paste your cover letter"
-                    className="w-full p-2 rounded border focus:outline-none focus:ring-2 focus:ring-purple-400 dark:bg-gray-800 dark:border-gray-700"
-                    rows={4}
-                  />
+                  <>
+                    <textarea
+                      name={field}
+                      value={value}
+                      onChange={handleChange}
+                      placeholder="Write or paste your cover letter"
+                      className="w-full p-2 rounded border focus:outline-none focus:ring-2 focus:ring-purple-400 dark:bg-gray-800 dark:border-gray-700"
+                      rows={4}
+                    />
+                    <div className="flex gap-2 mt-1">
+                      <button
+                        type="button"
+                        onClick={generateCoverLetterPDF}
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-sm"
+                      >
+                        💌 Download as PDF
+                      </button>
+                      <button
+                        type="button"
+                        onClick={generateCoverLetterAI}
+                        className="bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-2 rounded text-sm"
+                      >
+                        ✨ Generate AI Text
+                      </button>
+                    </div>
+                  </>
                 ) : (
                   <input
                     type="text"
@@ -134,21 +172,12 @@ function App() {
                 )}
               </div>
             ))}
-            <div className="flex gap-4">
-              <button
-                type="submit"
-                className="w-1/2 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition"
-              >
-                📄 Generate CV PDF
-              </button>
-              <button
-                type="button"
-                onClick={generateCoverLetter}
-                className="w-1/2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition"
-              >
-                💌 Generate Cover Letter PDF
-              </button>
-            </div>
+            <button
+              type="submit"
+              className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition"
+            >
+              📄 Generate CV PDF
+            </button>
           </form>
 
           <PreviewCard formData={formData} />
