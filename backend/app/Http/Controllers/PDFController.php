@@ -26,6 +26,7 @@ class PDFController extends Controller
             return response()->json(['error' => 'CV view not found.'], 500);
         }
 
+        // AI summary generation via Gemini
         $aiResponse = Http::withHeaders([
             'Content-Type' => 'application/json',
         ])->post(env('GEMINI_API_URL') . '?key=' . env('GEMINI_API_KEY'), [
@@ -58,7 +59,7 @@ class PDFController extends Controller
     {
         $data = $request->all();
 
-        if (empty($data['cover_letter'])) {
+        if (!isset($data['cover_letter']) || trim($data['cover_letter']) === '') {
             $ai = Http::withHeaders([
                 'Content-Type' => 'application/json',
             ])->post(env('GEMINI_API_URL') . '?key=' . env('GEMINI_API_KEY'), [
@@ -72,6 +73,8 @@ class PDFController extends Controller
             if ($ai->successful()) {
                 $result = $ai->json();
                 $data['cover_letter'] = $result['candidates'][0]['content']['parts'][0]['text'] ?? '';
+            } else {
+                return response()->json(['error' => 'AI generation failed.'], 500);
             }
         }
 
