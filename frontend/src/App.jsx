@@ -114,23 +114,14 @@ function App() {
               <div key={field}>
                 <label className="block font-semibold mb-1 capitalize">{field.replace('_', ' ')}</label>
                 {field === 'cover_letter' ? (
-                  <>
-                    <textarea
-                      name={field}
-                      value={value}
-                      onChange={handleChange}
-                      placeholder="Write or generate a cover letter..."
-                      className="w-full p-2 rounded border focus:outline-none focus:ring-2 focus:ring-purple-400 dark:bg-gray-800 dark:border-gray-700"
-                      rows={4}
-                    />
-                    <button
-                      type="button"
-                      onClick={generateCoverLetter}
-                      className="text-sm text-purple-600 dark:text-purple-300 hover:underline mt-1"
-                    >
-                      ✨ Generate Cover Letter (demo)
-                    </button>
-                  </>
+                  <textarea
+                    name={field}
+                    value={value}
+                    onChange={handleChange}
+                    placeholder="Write or paste your cover letter"
+                    className="w-full p-2 rounded border focus:outline-none focus:ring-2 focus:ring-purple-400 dark:bg-gray-800 dark:border-gray-700"
+                    rows={4}
+                  />
                 ) : (
                   <input
                     type="text"
@@ -143,12 +134,21 @@ function App() {
                 )}
               </div>
             ))}
-            <button
-              type="submit"
-              className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition"
-            >
-              📄 Generate CV PDF
-            </button>
+            <div className="flex gap-4">
+              <button
+                type="submit"
+                className="w-1/2 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition"
+              >
+                📄 Generate CV PDF
+              </button>
+              <button
+                type="button"
+                onClick={generateCoverLetter}
+                className="w-1/2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition"
+              >
+                💌 Generate Cover Letter PDF
+              </button>
+            </div>
           </form>
 
           <PreviewCard formData={formData} />
