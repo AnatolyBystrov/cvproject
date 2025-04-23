@@ -14,7 +14,7 @@ Route::get('/generate', function () {
 
 Route::post('/generate-cover-letter', [PDFController::class, 'generateCoverLetter']);
 Route::post('/generate', [PDFController::class, 'generate']);
-
+Route::post('/generate-cover-letter-text', [PDFController::class, 'generateCoverLetterText']);
 
 Route::options('/generate', function (Request $request) {
     return response('', 204)
