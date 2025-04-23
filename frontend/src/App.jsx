@@ -3,6 +3,8 @@ import PreviewCard from './PreviewCard';
 import './index.css';
 
 function App() {
+  const API_URL = 'https://cvproject-g1yv.onrender.com';
+
   const [formData, setFormData] = useState({
     name: '',
     position: '',
@@ -20,9 +22,29 @@ function App() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const generateCoverLetter = () => {
-    const fakeLetter = `Dear Hiring Manager,\n\nI am writing to express my interest in the position of ${formData.position || '___'} at your company. I believe my skills and experience make me an ideal candidate for this role.\n\nSincerely,\n${formData.name || 'Your Name'}`;
-    setFormData((prev) => ({ ...prev, cover_letter: fakeLetter }));
+  const generateCoverLetter = async () => {
+    const form = new FormData();
+    Object.entries(formData).forEach(([key, value]) => form.append(key, value));
+
+    try {
+      const res = await fetch(`${API_URL}/api/generate-cover-letter`, {
+        method: 'POST',
+        body: form,
+      });
+
+      if (!res.ok) throw new Error("PDF generation failed");
+
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "cover_letter.pdf";
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("❌ Error generating cover letter:", err);
+      alert("An error occurred. Try again later.");
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -33,10 +55,6 @@ function App() {
       form.append(key, formData[key]);
     }
 
-    const API_URL = 'https://cvproject-g1yv.onrender.com';;
-    const fullEndpoint = `${API_URL}/api/generate`;
-    console.log('🌍 API URL:', fullEndpoint);
-
     try {
       const response = await fetch(`${API_URL}/api/generate`, {
         method: 'POST',
@@ -44,7 +62,7 @@ function App() {
         headers: {
           'Accept': 'application/json'
         }
-      });      
+      });
 
       const contentType = response.headers.get('content-type') || '';
       const debugText = await response.clone().text();
