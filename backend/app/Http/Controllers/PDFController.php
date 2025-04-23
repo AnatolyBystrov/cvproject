@@ -26,7 +26,6 @@ class PDFController extends Controller
             return response()->json(['error' => 'CV view not found.'], 500);
         }
 
-        // AI summary generation via Gemini
         $aiResponse = Http::withHeaders([
             'Content-Type' => 'application/json',
         ])->post(env('GEMINI_API_URL') . '?key=' . env('GEMINI_API_KEY'), [
@@ -59,7 +58,6 @@ class PDFController extends Controller
     {
         $data = $request->all();
 
-        
         if (empty($data['cover_letter'])) {
             $ai = Http::withHeaders([
                 'Content-Type' => 'application/json',
@@ -79,5 +77,28 @@ class PDFController extends Controller
 
         $pdf = Pdf::loadView('pdf.cover_letter', $data);
         return $pdf->download('cover_letter.pdf');
+    }
+
+    public function generateCoverLetterText(Request $request)
+    {
+        $data = $request->only(['position', 'experience', 'education', 'skills']);
+
+        $ai = Http::withHeaders([
+            'Content-Type' => 'application/json',
+        ])->post(env('GEMINI_API_URL') . '?key=' . env('GEMINI_API_KEY'), [
+            'contents' => [
+                ['parts' => [[
+                    'text' => "Write a professional cover letter for the {$data['position']} position. Experience: {$data['experience']}. Education: {$data['education']}. Skills: {$data['skills']}"
+                ]]]
+            ]
+        ]);
+
+        $coverLetter = '';
+        if ($ai->successful()) {
+            $result = $ai->json();
+            $coverLetter = $result['candidates'][0]['content']['parts'][0]['text'] ?? '';
+        }
+
+        return response()->json(['cover_letter' => $coverLetter]);
     }
 }
