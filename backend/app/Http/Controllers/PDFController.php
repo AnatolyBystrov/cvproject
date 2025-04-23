@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\View;
 use Dompdf\Dompdf;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class PDFController extends Controller
 {
@@ -26,7 +27,6 @@ class PDFController extends Controller
             return response()->json(['error' => 'CV view not found.'], 500);
         }
 
-        // AI summary generation via Gemini
         $aiResponse = Http::withHeaders([
             'Content-Type' => 'application/json',
         ])->post(env('GEMINI_API_URL') . '?key=' . env('GEMINI_API_KEY'), [
@@ -38,9 +38,17 @@ class PDFController extends Controller
         ]);
 
         $data['ai_summary'] = '';
+
         if ($aiResponse->successful()) {
             $json = $aiResponse->json();
-            $data['ai_summary'] = $json['candidates'][0]['content']['parts'][0]['text'] ?? '';
+            Log::info('Gemini CV summary response:', $json);
+
+            $data['ai_summary'] = $json['candidates'][0]['content']['parts'][0]['text'] ?? 'No summary generated.';
+        } else {
+            Log::error('Gemini API error (CV summary):', [
+                'status' => $aiResponse->status(),
+                'body' => $aiResponse->body()
+            ]);
         }
 
         $html = view('pdf.cv', $data)->render();
@@ -59,7 +67,7 @@ class PDFController extends Controller
     {
         $data = $request->all();
 
-        if (!isset($data['cover_letter']) || trim($data['cover_letter']) === '') {
+        if (empty($data['cover_letter'])) {
             $ai = Http::withHeaders([
                 'Content-Type' => 'application/json',
             ])->post(env('GEMINI_API_URL') . '?key=' . env('GEMINI_API_KEY'), [
@@ -72,9 +80,14 @@ class PDFController extends Controller
 
             if ($ai->successful()) {
                 $result = $ai->json();
-                $data['cover_letter'] = $result['candidates'][0]['content']['parts'][0]['text'] ?? '';
+                Log::info('Gemini Cover Letter PDF response:', $result);
+
+                $data['cover_letter'] = $result['candidates'][0]['content']['parts'][0]['text'] ?? 'Cover letter could not be generated.';
             } else {
-                return response()->json(['error' => 'AI generation failed.'], 500);
+                Log::error('Gemini API error (PDF cover letter):', [
+                    'status' => $ai->status(),
+                    'body' => $ai->body()
+                ]);
             }
         }
 
@@ -99,7 +112,14 @@ class PDFController extends Controller
         $coverLetter = '';
         if ($ai->successful()) {
             $result = $ai->json();
+            Log::info('Gemini Cover Letter Text response:', $result);
+
             $coverLetter = $result['candidates'][0]['content']['parts'][0]['text'] ?? '';
+        } else {
+            Log::error('Gemini API error (text generation):', [
+                'status' => $ai->status(),
+                'body' => $ai->body()
+            ]);
         }
 
         return response()->json(['cover_letter' => $coverLetter]);
