@@ -100,23 +100,34 @@ class PDFController extends Controller
 
     public function generateCoverLetterText(Request $request)
     {
-        $data = $request->only(['position', 'experience', 'education', 'skills']);
-
+        $data = $request->only(['position', 'experience', 'education', 'skills', 'name']);
+    
+        $prompt = "
+            You are a professional career advisor. 
+            Please create a detailed, engaging, and highly professional cover letter for a candidate applying for the {$data['position']} role.
+            The candidate's experience is: {$data['experience']}.
+            The candidate's education is: {$data['education']}.
+            The candidate's skills include: {$data['skills']}.
+            Make the tone of the cover letter confident, enthusiastic, and suitable for a modern technology company. 
+            Structure the letter properly, with an opening, body paragraphs, and a closing thanking the employer for their consideration.
+        ";
+    
         $ai = Http::withHeaders([
             'Content-Type' => 'application/json',
         ])->post(env('GEMINI_API_URL') . '?key=' . env('GEMINI_API_KEY'), [
             'contents' => [
                 ['parts' => [[
-                    'text' => "Write a professional cover letter for the {$data['position']} position. Experience: {$data['experience']}. Education: {$data['education']}. Skills: {$data['skills']}"
+                    'text' => $prompt
                 ]]]
             ]
         ]);
-
+    
         $coverLetter = '';
+    
         if ($ai->successful()) {
             $result = $ai->json();
             Log::info('Gemini Cover Letter Text response:', $result);
-
+    
             $coverLetter = $result['candidates'][0]['content']['parts'][0]['text'] ?? '';
         } else {
             Log::error('Gemini API error (text generation):', [
@@ -124,7 +135,11 @@ class PDFController extends Controller
                 'body' => $ai->body()
             ]);
         }
-
+    
+        if (empty($coverLetter)) {
+            $coverLetter = "Dear Hiring Manager,\n\nI am excited to apply for the {$data['position']} position. With my background in {$data['education']} and my experience in {$data['experience']}, I am confident that I will contribute significantly to your company.\n\nThank you for considering my application.\n\nSincerely,\n\n{$data['name']}";
+        }
+    
         return response()->json(['cover_letter' => $coverLetter]);
-    }
+    }    
 }
