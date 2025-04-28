@@ -92,7 +92,10 @@ class PDFController extends Controller
         }
 
         $pdf = Pdf::loadView('pdf.cover_letter', $data);
-        return $pdf->download('cover_letter.pdf');
+
+        return response($pdf->output(), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Access-Control-Allow-Origin', '*');
     }
 
     public function generateCoverLetterText(Request $request)
