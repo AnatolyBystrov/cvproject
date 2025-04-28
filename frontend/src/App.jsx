@@ -49,12 +49,14 @@ function App() {
 
   const generateCoverLetterAI = async () => {
     try {
+      const form = new FormData();
+      Object.entries(formData).forEach(([key, value]) => form.append(key, value));
+  
       const response = await fetch(`${API_URL}/api/generate-cover-letter-text`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: form,
       });
-
+  
       const data = await response.json();
       if (response.ok && data.cover_letter) {
         setFormData(prev => ({ ...prev, cover_letter: data.cover_letter }));
@@ -66,6 +68,7 @@ function App() {
       alert("An error occurred. Try again later.");
     }
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -141,5 +141,6 @@ class PDFController extends Controller
         }
     
         return response()->json(['cover_letter' => $coverLetter]);
-    }    
+    }
+    
 }
